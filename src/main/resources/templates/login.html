@@ -13,23 +13,25 @@
   <div id = "copycat">
     <img th:src="@{/images/copycat.png}">
   </div>
-  <div class="login-page" th:object="${memberRequest}" >
+  <div class="login-page" th:object="${memberRequest}">
     <div class="form"  >
       <form class="register-form" action="/api/join" th:action="@{/api/join}" method="post">
-        <input type="text" th:field="*{memberId}" placeholder="아이디" pattern="[A-Za-z0-9]+" required minlength="6" maxlength="12"/>
-        <input type="text" th:field="*{nickname}"placeholder="닉네임" required minlength="2" maxlength="8"/>
-        <input type="password" th:field="*{password}" placeholder="비밀번호" pattern="[A-Za-z0-9]+" required maxlength="10"/>
+        <input type="text" name="memberId" placeholder="아이디" pattern="[A-Za-z0-9]+" required minlength="6" maxlength="12"/>
+        <input type="text" name="nickname" placeholder="닉네임" required minlength="2" maxlength="8"/>
+        <input type="password" name="password" placeholder="비밀번호" pattern="[A-Za-z0-9]+" required maxlength="10"/>
         <button>회원 가입</button>
         <p class="message">이미 계정이 있나요? <a href="#">로그인</a></p>
       </form>
-      <form class="login-form">
-        <input type="text" placeholder="아이디" pattern="[A-Za-z0-9]+" required minlength="6" maxlength="12" />
-        <input type="password" placeholder="비밀번호" pattern="[A-Za-z0-9]+" required maxlength="10"/>
+      <form class="login-form" action="/api/login" th:action="@{/api/login}" method="post">
+        <input type="text" name="memberId" placeholder="아이디" pattern="[A-Za-z0-9]+" required minlength="6" maxlength="12" />
+        <input type="password" name="password" placeholder="비밀번호" pattern="[A-Za-z0-9]+" required maxlength="10"/>
         <button>로그인</button>
         <p class="message">아이디가 없으시나요? <a href="#">계정 만들기</a></p>
       </form>
     </div>
-    <p th:errors="*{memberId}" id="error-message"></p>
+    <div th:if="${#fields.hasGlobalErrors()}" id="error-message">
+      <p class="field-error" th:each="err : ${#fields.globalErrors()}" th:text="${err}">전체 오류 메시지</p>
+    </div>
   </div>
 
 </body>

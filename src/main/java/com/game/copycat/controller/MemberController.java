@@ -19,7 +19,7 @@ public class MemberController {
 
     @PostMapping("/join")
     public String join(
-            @Valid @ModelAttribute JoinRequest joinRequest,
+            @Valid @ModelAttribute("memberRequest") JoinRequest joinRequest,
             BindingResult bindingResult
     ) {
         boolean isSuccess = memberService.join(joinRequest, bindingResult);
@@ -33,7 +33,7 @@ public class MemberController {
 
     @PostMapping("/login")
     public String login(
-            @Valid @ModelAttribute LoginRequest loginRequest,
+            @Valid @ModelAttribute("memberRequest") LoginRequest loginRequest,
             BindingResult bindingResult
             ) {
         boolean isSuccess = memberService.login(loginRequest, bindingResult);

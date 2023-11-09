@@ -3,7 +3,6 @@ package com.game.copycat.domain;
 import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 
-//@NoArgsConstructor(access = AccessLevel.PRIVATE)
 @Getter
 @Setter
 public class JoinRequest {
@@ -13,11 +12,4 @@ public class JoinRequest {
     private String nickname;
     @NotBlank
     private String password;
-
-//    @Builder
-//    public MemberRequest(String memberId, String nickname, String password) {
-//        this.memberId = memberId;
-//        this.nickname = nickname;
-//        this.password = password;
-//    }
 }

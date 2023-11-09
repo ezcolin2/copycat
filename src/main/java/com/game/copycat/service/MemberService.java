@@ -21,7 +21,7 @@ public class MemberService {
         Optional<Member> findMember = memberRepository.findByMemberId(joinRequest.getMemberId());
         // 중복 아이디가 존재한다면 BindingResult에 오류 담아서 보내기
         if (findMember.isPresent()) {
-            bindingResult.rejectValue("memberId", "duplication", "아이디 생성에 실패했습니다. 같은 아이디가 존재합니다.");
+            bindingResult.reject("duplication", "아이디 생성에 실패했습니다. 같은 아이디가 존재합니다.");
             return false;
         }
         Member member = Member.builder()
@@ -32,18 +32,19 @@ public class MemberService {
         return true;
     }
 
-    public boolean login(LoginRequest joinRequest, BindingResult bindingResult) {
-        Optional<Member> findMember = memberRepository.findByMemberId(joinRequest.getMemberId());
+    public boolean login(LoginRequest loginRequest, BindingResult bindingResult) {
+        Optional<Member> findMember = memberRepository.findByMemberId(loginRequest.getMemberId());
         // 해당 아이디가 존재하지 않는다면 BindingResult에 오류 담아서 보내기
         if (findMember.isEmpty()) {
-            bindingResult.rejectValue("id","notfound", "해당 아이디가 존재하지 않습니다.");
+            bindingResult.reject("notfound", "해당 아이디가 존재하지 않습니다.");
             return false;
         }
-        // 비밀번호가 같다면 true 반환
-        if (findMember.get().getPassword().equals(encoder.encode(joinRequest.getPassword()))) {
-            return true;
+        // 비밀번호가 같지 않다면 bindingResult에 오류 담아서 보내기
+        if (!encoder.matches(loginRequest.getPassword(), findMember.get().getPassword())) {
+            bindingResult.reject("notequal", "비밀번호가 일치하지 않습니다.");
+            return false;
         }
-    return true;
+        return true;
 
     }
 }
