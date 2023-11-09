@@ -54,6 +54,7 @@
   color: #E3BF7D;
   text-decoration: none;
 }
+
 .form .register-form {
   display: none;
 }
@@ -102,4 +103,10 @@ body {
 }
 #copycat{
     text-align:center;
+}
+#error-message {
+    color: red;
+    opacity: 0;
+    transition: opacity 1s ease-in-out;
+    text-align: center;
 }

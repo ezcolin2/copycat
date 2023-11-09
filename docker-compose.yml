@@ -1,0 +1,41 @@
+version: '3.4'
+services:
+  redis:
+    image: redis
+    container_name: redis
+    command: redis-server
+    volumes:
+      - /etc/redis:/usr/local/etc/redis
+      - /etc/data:/data
+    #      - C:\Users\growth\redis_volume\redis.conf:/usr/local/etc/redis/redis.conf
+    #      - C:\Users\growth\redis_volume\data:/data
+    restart: always
+
+  database:
+    container_name: mysql_db
+    image: mysql
+    restart: always
+    environment:
+      MYSQL_DATABASE: copycat
+      MYSQL_ROOT_HOST: 'root'
+      MYSQL_ROOT_PASSWORD: 1234
+      TZ: 'Asia/Seoul'
+    ports:
+      - "3306:3306"
+    volumes:
+      - ./mysql/conf.d:/etc/mysql/conf.d # MySQL 설정 파일 위치
+    command:
+      - "mysqld"
+      - "--character-set-server=utf8mb4"
+      - "--collation-server=utf8mb4_unicode_ci"
+      -
+  springboot:
+    image: growth123/ticket
+    container_name: springboot
+    #    build:
+    #      context: .
+    #      dockerfile: ./Dockerfile
+    ports:
+      - 8080:8080
+    depends_on:
+      - redis
