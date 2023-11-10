@@ -14,6 +14,7 @@ public class LoginController {
     @GetMapping("/login")
     public String login(Model model) {
         JoinRequest memberRequest = new JoinRequest();
+        // 타임리프에서 오류를 방지하기 위해서 비어있는 BindingResult와 JoinRequest를 넣어줌.
         model.addAttribute("bindingResult", new BeanPropertyBindingResult(new Object(), "bindingResult"));
         model.addAttribute("memberRequest", memberRequest);
         return "login";

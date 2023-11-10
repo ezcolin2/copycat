@@ -1,0 +1,60 @@
+version: '3.4'
+services:
+  redis:
+    image: redis
+    container_name: redis
+    command: redis-server --requirepass 1234 --port 6379
+    volumes:
+      - redis-volume:/data
+#      - /etc/redis:/usr/local/etc/redis # conf 파일
+#      - redis-volume:/data # MySQL를 호스트 내 볼륨에 연결
+#      - C:\Users\growth\redis_volume\redis.conf:/usr/local/etc/redis/redis.conf
+#      - C:\Users\growth\redis_volume\data:/data
+#    ports:
+#      - "6379:6379"
+    restart: always
+    networks:
+      - copycat-dev
+  database:
+    container_name: mysql_db
+    image: mysql/mysql-server:5.7
+    restart: always
+    environment:
+      MYSQL_DATABASE: copycat
+      MYSQL_ROOT_HOST: '%'
+      MYSQL_ROOT_PASSWORD: 1234
+
+      TZ: 'Asia/Seoul'
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql-volume:/var/lib # MySQL를 호스트 내 볼륨에 연결
+    command:
+      - "mysqld"
+      - "--character-set-server=utf8mb4"
+      - "--collation-server=utf8mb4_unicode_ci"
+    networks:
+      - copycat-dev
+  springboot:
+#    image: growth123/ticket
+    container_name: springboot
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    ports:
+      - "8080:8080"
+    environment:
+      - "SPRING_PROFILES_ACTIVE=dev"
+    depends_on:
+      - redis
+      - database
+    networks:
+      - copycat-dev
+networks:
+  copycat-dev:
+    external: true
+volumes:
+  redis-volume:
+    external: true
+  mysql-volume:
+    external: true
