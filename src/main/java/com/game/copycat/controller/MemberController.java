@@ -8,6 +8,7 @@ import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -39,12 +40,14 @@ public class MemberController {
     public String login(
             @Valid @ModelAttribute("memberRequest") LoginRequest loginRequest,
             BindingResult bindingResult,
-            HttpSession httpSession
+            HttpSession httpSession,
+            Model model
             ) {
         Optional<MemberInfo> memberInfo = memberService.login(loginRequest, bindingResult);
         // 로그인에 성공했다면 세션에 정보 저장
         if (memberInfo.isPresent()) {
             httpSession.setAttribute("member", memberInfo.get());
+            model.addAttribute("info", memberInfo.get());
             return "redirect:/rooms";
         }
         return "login";

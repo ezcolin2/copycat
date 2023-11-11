@@ -1,0 +1,133 @@
+body {
+  background: rgb(237, 193, 128);
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-content: center;
+  margin-top: 50px;
+}
+#copycat{
+  width: 50%;
+  height: auto;
+}
+#display{
+  display: flex;
+  width:1000px;
+
+}
+#display > div:first-child {
+  flex: 2; /* 첫 번째 자식 요소의 가로 비율을 2로 설정 */
+}
+
+#display > div:last-child {
+  flex: 8; /* 두 번째 자식 요소의 가로 비율을 8로 설정 */
+}
+
+/*
+카드 css
+참고 : https://codepen.io/BrendaCayzac/pen/vYQmvOK
+*/
+.category-card {
+  border-radius: 16px;
+  box-shadow: 0 30px 30px -25px rgba(65, 51, 183, 0.25);
+  width: 100%;
+  max-width: 230px;
+  height: 160px;
+  background-color: #EEEEEE;
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: space-between;
+}
+.category-card .tag {
+  display: inline-block;
+  background-color: #6874E8;
+  color: #EEEEEE;
+  font-weight: 600;
+  font-size: 0.875rem;
+  padding: 0.5em 0.75em;
+  line-height: 1;
+  border-radius: 6px;
+}
+.tag + * {
+  margin-top: 1rem;
+}
+.category-card h2 {
+  font-size: 1.2rem;
+  color: #202020;
+  line-height: 1.25;
+}
+.category-card h2{
+  margin-top: 1rem;
+}
+
+.category-card button {
+  font: inherit;
+  line-height: 1;
+  background-color: #EEEEEE;
+  border: 2px solid #6874E8;
+  color: #6874E8;
+  padding: 0.5em 1em;
+  border-radius: 6px;
+  font-weight: 500;
+
+}
+.category-card button:hover,.category-card button:focus {
+  background-color: #6874E8;
+  color: #EEEEEE;
+}
+
+/*
+컨테이너
+*/
+#container{
+  border-radius: 16px;
+  box-shadow: 0 30px 30px -25px rgba(65, 51, 183, 0.25);
+  width: 780px;
+  height: 420px;
+  background-color: white;
+  padding: 1.5rem;
+  display:grid;
+  grid-template-columns: repeat(3, 250px);
+  grid-template-rows: repeat(2, 200px);
+  gap: 5px;
+  place-content: space-evenly space-evenly
+  place-items: space-evenly space-evenly
+}
+
+/* 프로필 */
+.card {
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+  max-width: 150px;
+  margin: auto;
+  text-align: center;
+  background-color: white;
+  border-radius: 16px;
+  padding:10px;
+
+}
+
+.title {
+  color: grey;
+  font-size: 14px;
+}
+
+/*왼쪽 배치*/
+#left{
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  margin-right: 10px;
+
+}
+#left button{
+  display: inline-block;
+  background-color: #6874E8;
+  color: #EEEEEE;
+  font-weight: 600;
+  font-size: 0.875rem;
+  padding: 0.5em 0.75em;
+  line-height: 1;
+  border-radius: 6px;
+}

@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+
+    <link rel="stylesheet" th:href="@{/css/rooms.css}">
+</head>
+<body>
+<div id="display">
+    <div id="left"v>
+        <button type="button" class="btn btn-primary w-100" data-toggle="modal" data-target="#createRoomModal">방 생성</button>
+        <div class="card">
+            <img th:src="@{/images/user.png}" style="width:100%">
+            <h3>John Doe</h3>
+            <p class="title">CEO & Founder, Example</p>
+
+        </div>
+    </div>
+    <div id="container">
+        <div class="category-card">
+            <div class="content">
+                <span class="tag">Filter</span>
+                <h2>Fancy title</h2>
+                <button>
+                    <span>입장</span>
+                </button>
+            </div>
+        </div>
+        <div class="category-card">
+            <div class="content">
+                <span class="tag">Filter</span>
+                <h2>Fancy title</h2>
+                <button>
+                    <span>입장</span>
+                </button>
+            </div>
+        </div>
+        <div class="category-card">
+            <div class="content">
+                <span class="tag">Filter</span>
+                <h2>Fancy title</h2>
+                <button>
+                    <span>입장</span>
+                </button>
+            </div>
+        </div>
+        <div class="category-card">
+            <div class="content">
+                <span class="tag">Filter</span>
+                <h2>Fancy title</h2>
+                <button>
+                    <span>입장</span>
+                </button>
+            </div>
+        </div>
+        <div class="category-card">
+            <div class="content">
+                <span class="tag">Filter</span>
+                <h2>Fancy title</h2>
+                <button>
+                    <span>입장</span>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- 모달 창 -->
+<div class="modal fade" id="createRoomModal" tabindex="-1" role="dialog" aria-labelledby="createRoomModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="createRoomModalLabel">방 생성</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form action="/your-server-endpoint" method="post">
+                    <div class="form-group">
+                        <label for="roomName">방 이름</label>
+                        <input type="text" class="form-control" id="roomName" name="roomName" placeholder="방 이름을 입력하세요" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="password">비밀번호</label>
+                        <input type="password" class="form-control" id="password" name="password" placeholder="비밀번호를 입력하세요" disabled>
+                    </div>
+
+                    <div class="form-check form-check-inline">
+                        <input type="checkbox" class="form-check-input" id="lockCheckbox" name="isLocked">
+                        <label class="form-check-label" for="lockCheckbox">잠금 설정</label>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="rounds">라운드 개수 (1에서 10까지)</label>
+                        <input type="number" class="form-control" id="rounds" name="roundNum" placeholder="라운드 개수를 입력하세요" min="1" max="10" required>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group col-md-6">
+                            <button type="submit" class="btn btn-primary w-100">생성</button>
+                        </div>
+                        <div class="form-group col-md-6">
+                            <button type="button" class="btn btn-secondary w-100">취소</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- /모달 창 -->
+</div>
+</div>
+</div>
+</div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+<script>
+    document.getElementById('lockCheckbox').addEventListener('change', function () {
+      document.getElementById('password').disabled = !this.checked;
+    });
+  </script>
+
+
+
+
+
+
+
+</body>
+</html>

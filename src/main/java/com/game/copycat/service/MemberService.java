@@ -38,11 +38,13 @@ public class MemberService {
         // 해당 아이디가 존재하지 않는다면 BindingResult에 오류 담아서 보내기
         if (findMember.isEmpty()) {
             bindingResult.reject("notfound", "해당 아이디가 존재하지 않습니다.");
+            return Optional.empty();
         }
         // 비밀번호가 같지 않다면 bindingResult에 오류 담아서 보내기
         Member member = findMember.get();
         if (!encoder.matches(loginRequest.getPassword(), member.getPassword())) {
             bindingResult.reject("notequal", "비밀번호가 일치하지 않습니다.");
+            return Optional.empty();
         }
         MemberInfo memberInfo = MemberInfo.builder()
                 .memberId(member.getMemberId())
