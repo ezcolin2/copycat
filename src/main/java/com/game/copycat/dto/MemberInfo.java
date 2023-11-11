@@ -1,4 +1,4 @@
-package com.game.copycat.domain;
+package com.game.copycat.dto;
 
 import jakarta.persistence.Entity;
 import lombok.AccessLevel;

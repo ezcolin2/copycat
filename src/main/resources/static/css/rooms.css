@@ -40,9 +40,19 @@ body {
   align-items: flex-start;
   justify-content: space-between;
 }
-.category-card .tag {
+.category-card .tag1 {
   display: inline-block;
-  background-color: #6874E8;
+  background-color: #ff6666;
+  color: #EEEEEE;
+  font-weight: 600;
+  font-size: 0.875rem;
+  padding: 0.5em 0.75em;
+  line-height: 1;
+  border-radius: 6px;
+}
+.category-card .tag2 {
+  display: inline-block;
+  background-color: #00cc66;
   color: #EEEEEE;
   font-weight: 600;
   font-size: 0.875rem;

@@ -1,9 +1,11 @@
 package com.game.copycat.controller;
 
-import com.game.copycat.domain.JoinRequest;
-import com.game.copycat.domain.LoginRequest;
-import com.game.copycat.domain.MemberInfo;
+import com.game.copycat.domain.Room;
+import com.game.copycat.dto.JoinRequest;
+import com.game.copycat.dto.LoginRequest;
+import com.game.copycat.dto.MemberInfo;
 import com.game.copycat.service.MemberService;
+import com.game.copycat.service.RoomService;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -14,6 +16,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import java.util.List;
 import java.util.Optional;
 
 @Controller
@@ -21,6 +24,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class MemberController {
     private final MemberService memberService;
+    private final RoomService roomService;
 
     @PostMapping("/join")
     public String join(
@@ -48,7 +52,10 @@ public class MemberController {
         if (memberInfo.isPresent()) {
             httpSession.setAttribute("member", memberInfo.get());
             model.addAttribute("info", memberInfo.get());
-            return "redirect:/rooms";
+            // 현재 존재하는 방 정보도 담아서
+            List<Room> rooms = roomService.findAll();
+            model.addAttribute("rooms", rooms);
+            return "rooms";
         }
         return "login";
     }

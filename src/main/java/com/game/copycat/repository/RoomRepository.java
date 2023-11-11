@@ -1,2 +1,9 @@
-package com.game.copycat.repository;public class RoomRepositiory {
+package com.game.copycat.repository;
+
+import com.game.copycat.domain.Room;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
+
+@Repository
+public interface RoomRepository extends JpaRepository<Room, String> {
 }

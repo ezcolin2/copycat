@@ -1,6 +1,7 @@
-package com.game.copycat.domain;
+package com.game.copycat.dto;
 
 import jakarta.validation.constraints.NotBlank;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 

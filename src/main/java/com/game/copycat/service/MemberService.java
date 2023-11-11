@@ -1,9 +1,9 @@
 package com.game.copycat.service;
 
-import com.game.copycat.domain.JoinRequest;
-import com.game.copycat.domain.LoginRequest;
+import com.game.copycat.dto.JoinRequest;
+import com.game.copycat.dto.LoginRequest;
 import com.game.copycat.domain.Member;
-import com.game.copycat.domain.MemberInfo;
+import com.game.copycat.dto.MemberInfo;
 import com.game.copycat.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
