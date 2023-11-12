@@ -9,10 +9,12 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.io.Serializable;
+
 @Entity
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 @Getter
-public class Member {
+public class Member implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

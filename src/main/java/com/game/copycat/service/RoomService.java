@@ -36,8 +36,13 @@ public class RoomService {
         return roomRepository.save(room);
     }
 
-    public Room enterRoom(String id) {
-        return roomRepository.findById(id).get();
+    public Optional<Room> findById(String id) {
+        return roomRepository.findById(id);
+    }
+
+    public boolean passwordCheck(String id, String password) {
+        Optional<Room> room = roomRepository.findById(id);
+        return room.get().getPassword().equals(password);
     }
 
     public void deleteRoom(String id) {

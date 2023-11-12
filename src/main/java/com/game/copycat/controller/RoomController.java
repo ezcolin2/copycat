@@ -7,10 +7,9 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.Optional;
 
 @Controller
 @RequestMapping("/api/rooms")
@@ -27,4 +26,22 @@ public class RoomController {
         model.addAttribute("room", room);
         return String.format("/rooms/%s", room.getId());
     }
+//    @GetMapping("/{id}")
+//    public String enterRoom(@PathVariable("id") String id, String password, Model model) {
+//        Optional<Room> find = roomService.findById(id);
+//        if (find.isEmpty()) {
+//            // 찾지 못 하면 room으로
+//            return "rooms";
+//        }
+//        Room room = find.get();
+//        // 비밀번호 같다면 이동
+//        if (room.getPassword().equals(password)) {
+//            model.addAttribute("room", room);
+//        }
+//        // 틀리다면 비밀번호 입력 창으로
+//        else{
+//            return "password";
+//        }
+//
+//    }
 }

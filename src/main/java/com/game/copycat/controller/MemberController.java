@@ -40,23 +40,23 @@ public class MemberController {
         return "login";
     }
 
-    @PostMapping("/login")
-    public String login(
-            @Valid @ModelAttribute("memberRequest") LoginRequest loginRequest,
-            BindingResult bindingResult,
-            HttpSession httpSession,
-            Model model
-            ) {
-        Optional<MemberInfo> memberInfo = memberService.login(loginRequest, bindingResult);
-        // 로그인에 성공했다면 세션에 정보 저장
-        if (memberInfo.isPresent()) {
-            httpSession.setAttribute("member", memberInfo.get());
-            model.addAttribute("info", memberInfo.get());
-            // 현재 존재하는 방 정보도 담아서
-            List<Room> rooms = roomService.findAll();
-            model.addAttribute("rooms", rooms);
-            return "rooms";
-        }
-        return "login";
-    }
+//    @PostMapping("/login")
+//    public String login(
+//            @Valid @ModelAttribute("memberRequest") LoginRequest loginRequest,
+//            BindingResult bindingResult,
+//            HttpSession httpSession,
+//            Model model
+//            ) {
+//        Optional<MemberInfo> memberInfo = memberService.login(loginRequest, bindingResult);
+//        // 로그인에 성공했다면 세션에 정보 저장
+//        if (memberInfo.isPresent()) {
+//            httpSession.setAttribute("member", memberInfo.get());
+//            model.addAttribute("info", memberInfo.get());
+//            // 현재 존재하는 방 정보도 담아서
+//            List<Room> rooms = roomService.findAll();
+//            model.addAttribute("rooms", rooms);
+//            return "rooms";
+//        }
+//        return "login";
+//    }
 }
