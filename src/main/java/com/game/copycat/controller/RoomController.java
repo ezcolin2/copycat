@@ -1,7 +1,9 @@
 package com.game.copycat.controller;
 
+import com.game.copycat.domain.Game;
 import com.game.copycat.domain.Room;
 import com.game.copycat.dto.RoomRequest;
+import com.game.copycat.service.GameService;
 import com.game.copycat.service.RoomService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -16,6 +18,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class RoomController {
     private final RoomService roomService;
+    private final GameService gameService;
     @PostMapping
     public String createRoom(
             @ModelAttribute @Valid RoomRequest request,
@@ -23,8 +26,10 @@ public class RoomController {
             ) {
         // 방을 생성하고 방으로 이동
         Room room = roomService.createRoom(request);
+        Game game = gameService.createGame(room.getId(), room.getRoomName());
         model.addAttribute("room", room);
-        return String.format("/rooms/%s", room.getId());
+        model.addAttribute("game", room);
+        return String.format("redirect:/rooms/%s", room.getId());
     }
 //    @GetMapping("/{id}")
 //    public String enterRoom(@PathVariable("id") String id, String password, Model model) {
