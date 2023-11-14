@@ -28,7 +28,8 @@ public class Room {
     private Boolean isLocked;
     @NotNull
     private Integer round;
-
+    @NotNull
+    private Integer currentNum; // 현재 방 인원 수
     @Builder
     public Room(String roomName, String password, boolean isLocked, Integer round) {
         String current = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmssSSS"));
@@ -38,5 +39,12 @@ public class Room {
         this.password = password;
         this.isLocked = isLocked;
         this.round = round;
+        this.currentNum = 0;
+    }
+    public void enterRoom() {
+        this.currentNum+=1;
+    }
+    public void leaveRoom() {
+        this.currentNum-=1;
     }
 }

@@ -1,42 +1,45 @@
 // posenet.js
+const btn = document.querySelector("#draw")
+btn.addEventListener('click', function (event){
+    var videos = document.querySelectorAll("video");
+    videos.forEach(function(video){
+        make_canvas(video);
+    })
+})
+function make_canvas(video){
+    video.width=450;
+    video.height=300;
 
-const video = document.getElementById("video");
-const canvas = document.getElementById("canvas");
-const context = canvas.getContext("2d");
+    // canvas 생성
+    var canvas = document.createElement("canvas");
+    var context = canvas.getContext("2d");
 
+    // canvas를 video에 씌우귀 위해 같은 크기, 같은 위치로 만들어서 document에 추가
+    canvas.width = video.width;
+    canvas.height = video.height;
 
+    canvas.style.position = "absolute";
+    canvas.style.left = video.offsetLeft + "px";
+    canvas.style.top = video.offsetTop + "px";
 
-console.log("시작")
-//webcam을 enable하는 코드
-navigator.mediaDevices.getUserMedia({video: true, audio: false}).then(function (stream) {
-    video.srcObject = stream;
-});
+    video.parentNode.appendChild(canvas);
 
-//then 안쪽이 function(model){} 이렇게 쓰는거랑 같다 (인자가 하나라 중괄호가 없는 것)
-posenet.load().then((model) => {
-    // 이곳의 model과 아래 predict의 model은 같아야 한다.
-    video.onloadeddata = (e) => {
-        //비디오가 load된 다음에 predict하도록. (안하면 콘솔에 에러뜸)
+    posenet.load().then((model) => {
+        console.log("모델 로드");
         predict();
-    };
 
-    function predict() {
-        //frame이 들어올 때마다 estimate를 해야하니 함수화 시킴
-        model.estimateSinglePose(video).then((pose) => {
-            canvas.width = video.width; //캔버스와 비디오의 크기를 일치시킴
-            canvas.height = video.height;
+        function predict() {
+            model.estimateSinglePose(video).then((pose) => {
+                canvas.width = video.width; //캔버스와 비디오의 크기를 일치시킴
+                canvas.height = video.height;
+                drawKeypoints(pose.keypoints, 0.6, context); //정확도
+                drawSkeleton(pose.keypoints, 0.6, context);
+            });
+            requestAnimationFrame(predict); //frame이 들어올 때마다 재귀호출
+        }
+    });
+}
 
-
-
-
-            drawKeypoints(pose.keypoints, 0.6, context); //정확도
-            drawSkeleton(pose.keypoints, 0.6, context);
-        });
-        requestAnimationFrame(predict); //frame이 들어올 때마다 재귀호출
-    }
-});
-
-/* PoseNet을 쓰면서 사용하는 함수들 코드 - 그냥 복사해서 쓰기*/
 
 //tensorflow에서 제공하는 js 파트
 const color = "aqua";

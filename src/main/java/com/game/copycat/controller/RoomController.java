@@ -1,12 +1,15 @@
 package com.game.copycat.controller;
 
 import com.game.copycat.domain.Game;
+import com.game.copycat.domain.Member;
+import com.game.copycat.domain.PrincipalDetails;
 import com.game.copycat.domain.Room;
 import com.game.copycat.dto.RoomRequest;
 import com.game.copycat.service.GameService;
 import com.game.copycat.service.RoomService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -18,15 +21,17 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class RoomController {
     private final RoomService roomService;
-    private final GameService gameService;
     @PostMapping
     public String createRoom(
             @ModelAttribute @Valid RoomRequest request,
-            Model model
+            Model model,
+            Authentication authentication
             ) {
+        // 유저 정보
+        PrincipalDetails principalDetails = (PrincipalDetails) authentication.getPrincipal();
+        Member member = principalDetails.getMember();
         // 방을 생성하고 방으로 이동
         Room room = roomService.createRoom(request);
-        Game game = gameService.createGame(room.getId(), room.getRoomName());
         model.addAttribute("room", room);
         model.addAttribute("game", room);
         return String.format("redirect:/rooms/%s", room.getId());

@@ -57,4 +57,20 @@ public class RoomService {
         return roomRepository.findAll();
     }
 
+    public Room enterRoom(String id) {
+        Room room = roomRepository.findById(id).get();
+        room.enterRoom();
+        return roomRepository.save(room);
+    }
+    public Room leaveRoom(String id) {
+        Room room = roomRepository.findById(id).get();
+        Integer currentNum = room.getCurrentNum();
+        // 마지막 남은 유저가 떠나면 삭제함
+        if (currentNum == 1) {
+            roomRepository.delete(room);
+            return null;
+        }
+        room.leaveRoom();
+        return roomRepository.save(room);
+    }
 }

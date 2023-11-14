@@ -76,9 +76,15 @@ public class SessionController {
                 .role(role).data(serverData).build();
         // Session already exists
         try {
-            Game game = gameService.enterGame(roomId);
+//            Game game = gameService.enterGame(roomId);
             Optional<Room> room = roomService.findById(roomId);
-            model.addAttribute("game", game);
+            Room room1 = room.get();
+            // 방이 꽉 찼다면 못 들어감
+            if (room1.getCurrentNum() >= 2) {
+                return "redirect:/rooms";
+
+            }
+//            model.addAttribute("game", game);
             // Generate a new token with the recently created connectionProperties
             String token = this.mapSessions.get(roomId).createConnection(connectionProperties).getToken();
 
@@ -125,7 +131,7 @@ public class SessionController {
             try {
 
                 Room room = roomService.createRoom(request);
-                Game game = gameService.createGame(room.getId(), room.getRoomName());
+//                Game game = gameService.createGame(room.getId(), room.getRoomName(), member.getId());
                 model.addAttribute("room", room);
                 model.addAttribute("game", room);
                 // Create a new OpenVidu Session

@@ -18,6 +18,7 @@
 
 	// On every new Stream received...
 	session.on('streamCreated', (event) => {
+	    console.log("콘솔")
 
 		// Subscribe to the Stream to receive it
 		// HTML video will be appended to element with 'video-container' id
@@ -25,6 +26,15 @@
 
 		// When the HTML video has been appended to DOM...
 		subscriber.on('videoElementCreated', (event) => {
+
+
+            // Append canvas to the body
+            document.body.appendChild(canvas);
+
+		    console.log("video created 123")
+		    const video = querySelector('video')
+		    console.log("비디오 element 정보")
+		    console.log(video)
 
 			// Add a new HTML element for the user's name and nickname over its video
 			appendUserData(event.element, subscriber.stream.connection);

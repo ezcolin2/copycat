@@ -23,6 +23,8 @@
     <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs-backend-webgl@3.11.0/dist/tf-backend-webgl.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/pose-detection@0.0.6/dist/pose-detection.min.js"></script>
 
+    <script src="https://cdn.jsdelivr.net/sockjs/1/sockjs.min.js"></script>
+    <script src="/webjars/stomp-websocket/stomp.min.js"></script>
 </head>
 
 <body>
@@ -55,12 +57,7 @@
                         Leave session</button>
                 </form>
             </div>
-            <!--				<div id="main-video" class="col-md-6">-->
-            <!--					<p class="nickName"></p>-->
-            <!--					<p class="userName"></p>-->
-            <!--					<video id="video" autoplay="autoplay" playsinline="true" width="640" height="480"></video>-->
-            <!--					<canvas id="canvas" width="640" height="480"></canvas>-->
-            <!--				</div>-->
+            <button id="draw">hello</button>
             <div id="video-container"></div>
         </div>
     </div>
@@ -99,6 +96,7 @@
 	// On every new Stream received...
 	session.on('streamCreated', (event) => {
 
+
 		// Subscribe to the Stream to receive it
 		// HTML video will be appended to element with 'video-container' id
 		var subscriber = session.subscribe(event.stream, 'video-container');
@@ -106,6 +104,7 @@
 		// When the HTML video has been appended to DOM...
 		subscriber.on('videoElementCreated', (event) => {
 
+            console.log(event.element)
 			// Add a new HTML element for the user's name and nickname over its video
 			appendUserData(event.element, subscriber.stream.connection);
 		});

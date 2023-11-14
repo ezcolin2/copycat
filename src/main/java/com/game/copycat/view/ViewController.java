@@ -27,7 +27,6 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class ViewController {
     private final RoomService roomService;
-    private final GameService gameService;
     @GetMapping("/login")
     public String login(Model model) {
         JoinRequest memberRequest = new JoinRequest("", "", "");
@@ -43,6 +42,7 @@ public class ViewController {
         PrincipalDetails principal = (PrincipalDetails) authentication.getPrincipal();
         Member member = principal.getMember();
         MemberInfo info = MemberInfo.builder()
+                .id(member.getId())
                 .memberId(member.getMemberId())
                 .nickname(member.getNickname())
                 .total(member.getTotal())
@@ -63,9 +63,7 @@ public class ViewController {
         if (room.isEmpty()) {
             return "redirect:/rooms";
         }
-        Game game = gameService.enterGame(id);
         model.addAttribute("room", room.get());
-        model.addAttribute("game", game);
         return "game";
     }
 }
