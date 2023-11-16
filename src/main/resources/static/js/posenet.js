@@ -1,14 +1,16 @@
 // posenet.js
+// 코드 참조 : https://gyong0117.tistory.com/153
 const btn = document.querySelector("#draw")
 btn.addEventListener('click', function (event){
     var videos = document.querySelectorAll("video");
     videos.forEach(function(video){
         make_canvas(video);
+        video.className='offense'
     })
 })
 function make_canvas(video){
-    video.width=450;
-    video.height=300;
+    video.width=video.offsetWidth;
+    video.height=video.offsetHeight;
 
     // canvas 생성
     var canvas = document.createElement("canvas");

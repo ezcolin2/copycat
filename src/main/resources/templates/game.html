@@ -13,7 +13,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"></link>
     <!-- Bootstrap -->
 
-    <link rel="styleSheet" href="style.css" type="text/css" media="screen"></link>
+    <link rel="styleSheet" th:href="@{/css/style.css}" type="text/css" media="screen"></link>
     <script th:src="@{/js/openvidu-browser-2.29.0.js}"></script>
     <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@3.11.0/dist/tf.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/posenet@2.2.2/dist/posenet.min.js"></script>
@@ -107,6 +107,8 @@
             console.log(event.element)
 			// Add a new HTML element for the user's name and nickname over its video
 			appendUserData(event.element, subscriber.stream.connection);
+			appendGameData(event.element);
+			console.log('게임 데이터추가')
 		});
 	});
 
@@ -164,6 +166,7 @@
                 };
                 // initMainVideo(event.element, userData);
                 appendUserData(event.element, userData);
+                appendGameData(event.element);
                 $(event.element).prop('muted', true); // Mute local video
             });
 
@@ -208,6 +211,15 @@
 		videoElement.parentNode.insertBefore(dataNode, videoElement.nextSibling);
 		// addClickListener(videoElement, clientData, serverData);
 	}
+    function appendGameData(videoElement) {
+        console.log('게임 데이터 추가')
+        var gameData = document.createElement('div');
+        gameData.className = "game-data";
+        gameData.innerHTML = '<h2 class="score">현재 점수 : 0</h2>';
+        videoElement.parentNode.insertBefore(gameData, videoElement.nextSibling);
+        // addClickListener(videoElement, clientData, serverData);
+    }
+
 
 	function removeUserData(connection) {
 		var userNameRemoved = $("#data-" + connection.connectionId);

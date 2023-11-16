@@ -106,7 +106,9 @@ body {
   place-items: space-evenly space-evenly
 }
 
-/* 프로필 */
+/* 프로필
+코드 참조 : https://www.w3schools.com/howto/howto_css_cards.asp
+*/
 .card {
   box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
   max-width: 150px;
