@@ -80,7 +80,7 @@ public class GameController {
     @MessageMapping("/disconnect/{id}")
     @SendTo("/topic/connection/{id}")
     public ConnectionMessage disconnection(
-            @PathVariable("id") String id,
+            @DestinationVariable("id") String id,
             Authentication authentication
             ) {
         // 유저 정보
@@ -103,7 +103,7 @@ public class GameController {
                 .win(member.getWin())
                 .lose(member.getLose()).build();
         return ConnectionMessage.builder()
-                .connection(Connection.CONNECT)
+                .connection(Connection.DISCONNECT)
                 .isSuccess(true)
                 .message(member.getNickname() + "님께서 퇴장하셨습니다")
                 .result(info).build();

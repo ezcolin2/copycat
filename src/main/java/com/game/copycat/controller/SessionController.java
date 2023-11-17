@@ -95,8 +95,8 @@ public class SessionController {
             model.addAttribute("room", room.get());
             model.addAttribute("roomId", roomId);
             model.addAttribute("token", token);
-            model.addAttribute("nickName", "asd");
-            model.addAttribute("userName", "asd");
+            model.addAttribute("nickName", member.getNickname());
+            model.addAttribute("userName", member.getId());
             // Return session.html template
             return "game";
 
@@ -147,8 +147,8 @@ public class SessionController {
                 // Add all the needed attributes to the template
                 model.addAttribute("roomId", room.getId());
                 model.addAttribute("token", token);
-                model.addAttribute("nickName", "asdf");
-                model.addAttribute("userName", "asdf");
+                model.addAttribute("nickName", member.getNickname());
+                model.addAttribute("userName", member.getId());
 
                 // Return session.html template
 
@@ -177,6 +177,7 @@ public class SessionController {
                 if (this.mapSessionNamesTokens.get(roomId).isEmpty()) {
                     // Last user left: session must be removed
                     this.mapSessions.remove(roomId);
+                    // session과 함께 Room도 삭제
                     roomService.deleteRoom(roomId);
                 }
                 return "redirect:/rooms";
