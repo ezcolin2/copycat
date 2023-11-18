@@ -1,4 +1,4 @@
-package com.game.copycat.view;
+package com.game.copycat.controller;
 
 import com.game.copycat.domain.Game;
 import com.game.copycat.domain.Member;
@@ -27,6 +27,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class ViewController {
     private final RoomService roomService;
+    private final GameService gameService;
     @GetMapping("/login")
     public String login(Model model) {
         JoinRequest memberRequest = new JoinRequest("", "", "");
@@ -59,8 +60,9 @@ public class ViewController {
     @GetMapping("/rooms/{id}")
     public String games(@PathVariable("id") String id, Model model) {
         Optional<Room> room = roomService.findById(id);
-        // 해당 방이 없으면 방 목록으로 리다이렉트
-        if (room.isEmpty()) {
+        Optional<Game> game = gameService.findById(id);
+        // 해당 방이 없거나 꽉 찼다면 방 목록으로 리다이렉트
+        if (room.isEmpty() || game.isEmpty() || game.get().getCurrentNum()>=2) {
             return "redirect:/rooms";
         }
         model.addAttribute("room", room.get());

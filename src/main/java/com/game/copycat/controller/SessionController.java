@@ -69,7 +69,7 @@ public class SessionController {
         // object on login
         PrincipalDetails principalDetails = (PrincipalDetails) authentication.getPrincipal();
         Member member = principalDetails.getMember();
-        String serverData = "{\"serverData\": \"" + member.getId().toString() + "\"}";
+        String serverData = "{\"serverData\": \"" + member.getMemberId().toString() + "\"}";
 
         // Build connectionProperties object with the serverData and the role
         ConnectionProperties connectionProperties = new ConnectionProperties.Builder().type(ConnectionType.WEBRTC)
@@ -96,7 +96,7 @@ public class SessionController {
             model.addAttribute("roomId", roomId);
             model.addAttribute("token", token);
             model.addAttribute("nickName", member.getNickname());
-            model.addAttribute("userName", member.getId());
+            model.addAttribute("userName", member.getMemberId());
             // Return session.html template
             return "game";
 
@@ -148,7 +148,7 @@ public class SessionController {
                 model.addAttribute("roomId", room.getId());
                 model.addAttribute("token", token);
                 model.addAttribute("nickName", member.getNickname());
-                model.addAttribute("userName", member.getId());
+                model.addAttribute("userName", member.getMemberId());
 
                 // Return session.html template
 

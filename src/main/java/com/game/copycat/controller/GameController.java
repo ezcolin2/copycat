@@ -13,55 +13,40 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Optional;
 
 @Controller
 @RequiredArgsConstructor
 public class GameController {
     private final GameService gameService;
-    private final RoomService roomService;
+    private final SimpMessagingTemplate template;
 
+    // 연결
     @MessageMapping("/connect/{id}")
     @SendTo("/topic/connection/{id}")
     public ConnectionMessage connection(
             @DestinationVariable("id") String id,
             Authentication authentication
     ) {
+        System.out.println("name = " + authentication.getName());
         // 유저 정보
         PrincipalDetails principalDetails = (PrincipalDetails) authentication.getPrincipal();
         Member member = principalDetails.getMember();
-        // 방 정보
-        Optional<Room> findRoom = roomService.findById(id);
-        if (findRoom.isEmpty()) {
+        // 게임 정보
+        Optional<Game> findGame = gameService.enterGame(id, member.getMemberId());
+        // 접속할 수 없을 때
+        if (findGame.isEmpty()) {
             return ConnectionMessage.builder()
-                    .message("해당 아이디를 가진 게임이 없습니다.")
+                    .message("접속할 수 없습니다.")
                     .isSuccess(false).build();
-        }
-        Room room = findRoom.get();
-        Integer currentNum = room.getCurrentNum();
-        // 방이 이미 차있다면 거부
-        // 그런데 이거는 이미 Room에 입장할 때 체크하기 때문에 실질적으로 아래 로직이 실행될 일은 없어야 함
-        if (currentNum >= 2) {
-            return ConnectionMessage.builder()
-                    .message("더이상 입장이 불가능합니다.")
-                    .isSuccess(false).build();
-        }
-        // 자신이 방을 생성한 사람이라면
-        else if (currentNum == 0) {
-            gameService.createGame(room.getId(), member.getId(), room.getRoomName());
-            // 방 인원 수 증가
-            roomService.enterRoom(room.getId());
-
-        }
-        // 이미 생성된 방에 들어온 사람이라면
-        else if (currentNum == 1) {
-            // 방 인원 수 증가
-            roomService.enterRoom(room.getId());
         }
         MemberInfo info = MemberInfo.builder()
                 .id(member.getId())
@@ -77,6 +62,7 @@ public class GameController {
                 .result(info).build();
     }
 
+    // 연결 종료
     @MessageMapping("/disconnect/{id}")
     @SendTo("/topic/connection/{id}")
     public ConnectionMessage disconnection(
@@ -88,13 +74,7 @@ public class GameController {
         Member member = principalDetails.getMember();
 
         // 방 정보
-        Optional<Room> findRoom = roomService.findById(id);
-        if (findRoom.isEmpty()) {
-            return ConnectionMessage.builder()
-                    .message("해당 아이디를 가진 게임이 없습니다.")
-                    .isSuccess(false).build();
-        }
-        roomService.leaveRoom(findRoom.get().getId());
+        gameService.leaveGame(id, member.getMemberId());
         MemberInfo info = MemberInfo.builder()
                 .id(member.getId())
                 .memberId(member.getMemberId())
@@ -107,5 +87,23 @@ public class GameController {
                 .isSuccess(true)
                 .message(member.getNickname() + "님께서 퇴장하셨습니다")
                 .result(info).build();
+    }
+
+    // 방장 게임 시작
+    @MessageMapping("/start/{id}")
+    @SendTo("/topic/game/{id}")
+    public ConnectionMessage start(
+            @DestinationVariable("id") String id,
+            Authentication authentication
+    ) {
+        // 유저 정보
+        PrincipalDetails principalDetails = (PrincipalDetails) authentication.getPrincipal();
+        Member member = principalDetails.getMember();
+
+        // 방 정보
+        boolean isSuccess = gameService.startGame(id, member.getMemberId());
+        // 성공했다면
+        return null;
+
     }
 }

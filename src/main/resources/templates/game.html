@@ -35,7 +35,7 @@
         <div id="session">
             <div id="session-header">
                 <h1 th:text="${sessionName}" id="session-title"></h1>
-                <form action="/leave-session" method="post" onsubmit="return leaveSession()">
+                <form action="/leave-session" method="post" onsubmit="leaveSession()">
                     <input type="hidden" name="roomId" th:value="${roomId}"></input>
                     <input type="hidden" name="token" th:value="${token}"></input>
                     <button id="buttonLeaveSession" class="btn btn-large btn-danger" type="submit">
@@ -43,6 +43,7 @@
                 </form>
             </div>
             <button id="draw">hello</button>
+            <button id="start">게임 시작</button>
             <div id="video-container"></div>
         </div>
     </div>
@@ -173,7 +174,6 @@
         disconnect(roomId);
 		// --- 9) Leave the session by calling 'disconnect' method over the Session object ---
 		session.disconnect();
-		return false;
 	}
 
 	function appendUserData(videoElement, connection) {

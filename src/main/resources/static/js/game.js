@@ -11,15 +11,22 @@ function connect(roomId) {
             console.log(member.id);
             showMessage(response.message, member.id);
         });
+        stompClient.subscribe(`/user/topic/connection/${roomId}`, function (message) {
+            console.log(message);
+        });
         stompClient.send(`/app/connect/${roomId}`);
     });
+    const btn = document.querySelector("#start")
+    btn.addEventListener('click', function (event){
+        stompClient.send(`/app/start/${roomId}`);
+    })
 }
 
 function disconnect(roomId) {
     console.log(`disconnect roomId : ${roomId}`)
     if (stompClient !== null) {
     console.log(`/app/disconnect/${roomId}`)
-        stompClient.send(`/app/disconnect/${roomId}`, {});
+        stompClient.send(`/app/disconnect/${roomId}`);
         stompClient.disconnect();
     }
     console.log("Disconnected");

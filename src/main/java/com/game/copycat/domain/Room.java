@@ -30,6 +30,7 @@ public class Room {
     private Integer round;
     @NotNull
     private Integer currentNum; // 현재 방 인원 수
+
     @Builder
     public Room(String roomName, String password, boolean isLocked, Integer round) {
         String current = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmssSSS"));
