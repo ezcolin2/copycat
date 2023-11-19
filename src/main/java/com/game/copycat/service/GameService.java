@@ -4,6 +4,7 @@ import com.game.copycat.domain.Game;
 import com.game.copycat.domain.Member;
 import com.game.copycat.domain.Room;
 import com.game.copycat.domain.TurnState;
+import com.game.copycat.dto.GameInfo;
 import com.game.copycat.repository.GameRepository;
 import com.game.copycat.repository.RoomRepository;
 import lombok.RequiredArgsConstructor;
@@ -116,5 +117,49 @@ public class GameService {
     }
 
     // 턴을 변경하는 함수
+    public GameInfo changeTurn(String gameId) {
+        Game game = gameRepository.findById(gameId).get();
+        // 현재 차례인 id 가져옴
+        LinkedList<String> queue = game.getQueue();
+        String memberId = queue.pop();
+        // 현재 차례 공/수 정보 가져오고 변경
+        TurnState currentState = game.getCurrentState();
+        game.changeStatus();
+        // 현재 라운드 정보 가져오고 변경
+        Integer currentRound = game.getCurrentRound();
+        game.nextRound();
+        gameRepository.save(game);
+        GameInfo gameInfo = GameInfo.builder()
+                .turnStatus(currentState)
+                .currentRound(currentRound)
+                .memberId(memberId).build();
+        return gameInfo;
+    }
+    // 점수를 추가하는 함수
+    public GameInfo changeAndAddScore(String gameId, String currentMemberId, Integer score) {
+        Game game = gameRepository.findById(gameId).get();
+        // 방장의 수비 차례라면
+        if (currentMemberId.equals(game.getCreatorId())) {
+            game.addCreatorScore(score);
+        }
+        else{
+            game.addParticipantScore(score);
+        }
+        // 현재 차례인 id 가져옴
+        LinkedList<String> queue = game.getQueue();
+        String memberId = queue.pop();
+        // 현재 차례 공/수 정보 가져오고 변경
+        TurnState currentState = game.getCurrentState();
+        game.changeStatus();
+        // 현재 라운드 정보 가져오고 변경
+        Integer currentRound = game.getCurrentRound();
+        game.nextRound();
+        gameRepository.save(game);
+        GameInfo gameInfo = GameInfo.builder()
+                .turnStatus(currentState)
+                .currentRound(currentRound)
+                .memberId(memberId).build();
+        return gameInfo;
+    }
 }
 

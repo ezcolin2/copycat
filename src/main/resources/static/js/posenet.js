@@ -2,10 +2,18 @@
 // 코드 참조 : https://gyong0117.tistory.com/153
 const btn = document.querySelector("#draw")
 btn.addEventListener('click', function (event){
-    var videos = document.querySelectorAll("video");
+    const videos = document.querySelectorAll("video");
+    const canvasList = document.querySelectorAll('canvas');
+    // 기존 존재하는 canvas 모두 삭제
+    if (canvasList.length > 0) {
+        canvasList.forEach(canvas => {
+            canvas.remove();
+        });
+    }
+
     videos.forEach(function(video){
         make_canvas(video);
-        video.className='offense'
+//        video.className='offense'
     })
 })
 function make_canvas(video){
@@ -13,8 +21,8 @@ function make_canvas(video){
     video.height=video.offsetHeight;
 
     // canvas 생성
-    var canvas = document.createElement("canvas");
-    var context = canvas.getContext("2d");
+    const canvas = document.createElement("canvas");
+    const context = canvas.getContext("2d");
 
     // canvas를 video에 씌우귀 위해 같은 크기, 같은 위치로 만들어서 document에 추가
     canvas.width = video.width;

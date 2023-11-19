@@ -121,7 +121,7 @@ public class SessionController {
         // object on login
         PrincipalDetails principalDetails = (PrincipalDetails) authentication.getPrincipal();
         Member member = principalDetails.getMember();
-        String serverData = "{\"serverData\": \"" + member.getId().toString() + "\"}";
+        String serverData = "{\"serverData\": \"" + member.getMemberId().toString() + "\"}";
 
         // Build connectionProperties object with the serverData and the role
         ConnectionProperties connectionProperties = new ConnectionProperties.Builder().type(ConnectionType.WEBRTC)

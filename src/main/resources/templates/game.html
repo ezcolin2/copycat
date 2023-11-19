@@ -15,6 +15,7 @@
 
     <link rel="styleSheet" th:href="@{/css/style.css}" type="text/css" media="screen"></link>
     <link rel="styleSheet" th:href="@{/css/game.css}" type="text/css" media="screen"></link>
+    <link rel="styleSheet" th:href="@{/css/timer.css}" type="text/css" media="screen"></link>
     <script th:src="@{/js/openvidu-browser-2.29.0.js}"></script>
     <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@3.11.0/dist/tf.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/posenet@2.2.2/dist/posenet.min.js"></script>
@@ -29,7 +30,15 @@
 </head>
 
 <body>
-
+<div class="circleProgress_wrapper" >
+    <div class="wrapper right">
+        <div class="circleProgress rightcircle right_cartoon"></div>
+    </div>
+    <div class="wrapper left">
+        <div class="circleProgress leftcircle left_cartoon"></div>
+    </div>
+    <span id="timer">3</span>
+</div>
 <div id="main-container" class="container">
     <div id="logged">
         <div id="session">
@@ -42,7 +51,7 @@
                         Leave session</button>
                 </form>
             </div>
-            <button id="draw">hello</button>
+            <button id="draw">스켈레톤 그리기</button>
             <button id="start">게임 시작</button>
             <div id="video-container"></div>
         </div>
@@ -85,10 +94,12 @@
 
             console.log(event.element)
 			// Add a new HTML element for the user's name and nickname over its video
+			const userName = JSON.parse(subscriber.stream.connection.data.split('%/%')[1]).serverData
+            event.element.id = `video-${userName}`;
 			appendUserData(event.element, subscriber.stream.connection);
 			appendGameData(event.element);
-			console.log(JSON.parse(subscriber.stream.connection.data.split('%/%')[1]).serverData);
-            appendMessage(event.element, JSON.parse(subscriber.stream.connection.data.split('%/%')[1]).serverData);
+			console.log(userName);
+            appendMessage(event.element, userName);
 			console.log('게임 데이터추가')
 		});
 	});
@@ -146,6 +157,7 @@
                     userName: userName
                 };
                 // initMainVideo(event.element, userData);
+                event.element.id = `video-${userName}`;
                 appendUserData(event.element, userData);
                 appendGameData(event.element);
                 appendMessage(event.element, userData.userName);
