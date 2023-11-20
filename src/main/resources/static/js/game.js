@@ -199,7 +199,7 @@ function sendImage(videoId, roomId){
        base64Image: base64Image
    };
 
-   fetch("http://localhost:8080/api/images", {
+   fetch("http://localhost/api/images", {
        method: 'POST',
        headers: {
            'Content-Type': 'application/json',

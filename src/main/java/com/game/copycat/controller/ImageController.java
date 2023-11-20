@@ -15,8 +15,6 @@ import java.util.Base64;
 
 @RestController
 @RequestMapping("/api/images")
-@CrossOrigin(origins = "*", allowedHeaders = "*")
-
 public class ImageController {
     @Value("${image.path}")
     private String path; // 이미 저장 경로

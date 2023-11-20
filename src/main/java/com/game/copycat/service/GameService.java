@@ -8,10 +8,12 @@ import com.game.copycat.dto.GameInfo;
 import com.game.copycat.repository.GameRepository;
 import com.game.copycat.repository.RoomRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.BindingResult;
 
+import java.io.File;
 import java.util.LinkedList;
 import java.util.Optional;
 
@@ -20,6 +22,22 @@ import java.util.Optional;
 public class GameService {
     private final GameRepository gameRepository;
     private final RoomRepository roomRepository;
+    @Value("${image.path}")
+    private String path; // 이미 저장 경로
+    private void deleteImage(String roomId) {
+        String imagePath = path + roomId + ".png";
+
+        try {
+            File file = new File(imagePath);
+
+            // 이미지 파일이 존재하는지 확인 후 삭제
+            if (file.exists()) {
+                file.delete();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
     public Game createGame(String gameId, String creatorId) {
         Game game = Game.builder()
                 .id(gameId)
@@ -73,6 +91,8 @@ public class GameService {
         if (game.getCurrentNum() == 1) {
             gameRepository.delete(game);
             roomRepository.delete(roomRepository.findById(gameId).get());
+            deleteImage(gameId);
+
         }
         // 아직 사람이 남아있고 방 생성자가 떠난다면 참가자를 방 생성자로 변경
         else if (memberId.equals(creatorId)) {
