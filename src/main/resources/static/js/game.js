@@ -1,4 +1,5 @@
 var stompClient;
+var clock;
 function connect(roomId) {
     console.log('연결 시작');
     var socket = new SockJS('/copycat');
@@ -20,6 +21,7 @@ function connect(roomId) {
             if (response.state=="OFFENSE"){
                 setTimeout(function () {
                    const imageSrc = captureAndDisplayFrame(`video-${response.memberId}`)
+                   sendImage(`video-${response.memberId}`, roomId);
                    stompClient.send(`/app/offense/${roomId}`, {}, "asdf");
                    console.log('이미지 정보 전송');
                    console.log(imageSrc);
@@ -39,8 +41,11 @@ function connect(roomId) {
                 video = document.querySelector(`#video-${response.memberId}`);
                 video.className = 'offense';
                 setTimeout(function () {
-                   video.className = '';
-                   captureAndDisplayFrame(`video-${response.memberId}`)
+                    video = document.querySelector(`#video-${response.memberId}`);
+                    if (video.className=='offense'){
+                    video.className = '';
+//                    captureAndDisplayFrame(`video-${response.memberId}`)
+                    }
                 }, 10000);
                 console.log(video)
                 showTimer();
@@ -48,13 +53,15 @@ function connect(roomId) {
                 video = document.querySelector(`#video-${response.memberId}`);
                 video.className = 'defense';
                 setTimeout(function () {
-                   video.className = '';
+                    if (video.className=='defense'){
+                       video.className = '';
+                    }
 //                   captureAndDisplayFrame(`video-${response.memberId}`)
                 }, 10000);
 
                 console.log(video)
+                showTimer();
             }
-            showTimer();
         });
         stompClient.send(`/app/connect/${roomId}`);
     });
@@ -93,7 +100,7 @@ function showTimer(){
     var time=9;
     resetAnimation();
     clearInterval(clock);
-    var clock = setInterval(function(){
+    clock = setInterval(function(){
         timer.innerHTML=time;
         time--;
         if(time<0) {
@@ -119,12 +126,8 @@ function resetAnimation(){
 }
 
 function captureAndDisplayFrame(videoId) {
-    // 비디오 엘리먼트 참조
     var video = document.getElementById(videoId);
     console.log(video);
-
-    // 비디오 메타데이터 로드 후 콜백 함수 등록
-    // 현재 비디오 시간을 가져와서 프레임 캡처
 
     // 캡처된 프레임을 그릴 캔버스 생성
     var canvas = document.createElement('canvas');
@@ -139,34 +142,75 @@ function captureAndDisplayFrame(videoId) {
     var capturedImage = new Image();
     capturedImage.src = canvas.toDataURL('image/png');
     console.log(capturedImage);
-
+    // binary 변환
+    var imageData = canvas.toDataURL('image/png').replace(/^data:image\/(png|jpg);base64,/, '');
+    var binaryData = atob(imageData);
+    console.log("binary data")
+    console.log(binaryData)
     // 이미지를 표시하는 함수 호출
     displayImage(capturedImage, videoId);
     return capturedImage.src;
 }
 
 function displayImage(image, videoId) {
-    // 이미지를 video 태그의 크기와 동일하게 만들기
     var video = document.getElementById(videoId);
     var videoRect = video.getBoundingClientRect();
 
-    // 이미지를 video 태그의 바로 위에 표시
     var imgContainer = document.createElement('div');
     imgContainer.style.position = 'absolute';
     imgContainer.style.top = videoRect.top + 'px';
     imgContainer.style.left = videoRect.left + 'px';
 
-    // 이미지 크기 설정
     image.width = videoRect.width;
     image.height = videoRect.height;
 
     imgContainer.appendChild(image);
 
-    // 문서에 이미지 컨테이너 추가
     document.body.appendChild(imgContainer);
 
-    // 3초 후에 이미지 컨테이너 제거 (종료 시간 조절 가능)
     setTimeout(function() {
         document.body.removeChild(imgContainer);
     }, 10000);
+}
+function sendImage(videoId, roomId){
+   var video = document.getElementById(videoId);
+   console.log(video);
+
+   // 캡처된 프레임을 그릴 캔버스 생성
+   var canvas = document.createElement('canvas');
+   canvas.width = video.videoWidth;
+   canvas.height = video.videoHeight;
+
+   // 캔버스에 비디오 현재 프레임을 그리기
+   var ctx = canvas.getContext('2d');
+   ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+   // 캔버스의 이미지 데이터를 가져와서 이미지로 변환
+   var capturedImage = new Image();
+   const base64Image = canvas.toDataURL('image/png').split(',')[1];;
+   console.log(capturedImage);
+   // binary 변환
+//   var imageData = canvas.toDataURL('image/png').replace(/^data:image\/(png|jpg);base64,/, '');
+//   var binaryData = atob(imageData);
+
+   //서버에 데이터 보내기
+   const data = {
+       roomId: roomId,
+       base64Image: base64Image
+   };
+
+   fetch("http://localhost:8080/api/images", {
+       method: 'POST',
+       headers: {
+           'Content-Type': 'application/json',
+       },
+       body: JSON.stringify(data),
+   })
+   .then(response => response.json())
+   .then(data => {
+       console.log(data);
+   })
+   .catch((error) => {
+       console.error('Error:', error);
+   });
 }
