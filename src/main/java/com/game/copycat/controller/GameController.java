@@ -4,6 +4,7 @@ import com.game.copycat.domain.*;
 import com.game.copycat.dto.*;
 import com.game.copycat.service.GameService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
@@ -21,6 +22,9 @@ public class GameController {
     private final GameService gameService;
     private final SimpMessagingTemplate template;
 
+    @Value("${server.host.address}")
+    private String hostAddress;
+
     // 연결
     @MessageMapping("/connect/{id}")
     @SendTo("/topic/connection/{id}")
@@ -28,6 +32,7 @@ public class GameController {
             @DestinationVariable("id") String id,
             Authentication authentication
     ) {
+
         System.out.println("name = " + authentication.getName());
         // 유저 정보
         PrincipalDetails principalDetails = (PrincipalDetails) authentication.getPrincipal();
@@ -129,8 +134,7 @@ public class GameController {
     @SendTo("/topic/game/{id}")
     public RoomInfo offense(
             @DestinationVariable("id") String id,
-            Authentication authentication,
-            String image
+            Authentication authentication
     ) {
         // 유저 정보
         PrincipalDetails principalDetails = (PrincipalDetails) authentication.getPrincipal();
@@ -172,9 +176,11 @@ public class GameController {
         // 모두에게 바뀐 게임 정보 보내기
         RoomInfo roomInfo = RoomInfo.builder()
                 .memberId(nextMemberId)
+                .creatorId(game.getCreatorId())
+                .participantId(game.getParticipantId())
                 .turnStatus(game.getCurrentState())
                 .currentRound(game.getCurrentRound())
-                .image(image)
+                .image(hostAddress + "storage/images/" + id + ".png")
                 .build();
         return roomInfo;
     }

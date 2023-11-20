@@ -20,11 +20,10 @@ function connect(roomId) {
             response = JSON.parse(turnState.body);
             if (response.state=="OFFENSE"){
                 setTimeout(function () {
-                   const imageSrc = captureAndDisplayFrame(`video-${response.memberId}`)
+//                   const imageSrc = captureAndDisplayFrame(`video-${response.memberId}`)
                    sendImage(`video-${response.memberId}`, roomId);
-                   stompClient.send(`/app/offense/${roomId}`, {}, "asdf");
+//                   stompClient.send(`/app/offense/${roomId}`, {}, "asdf");
                    console.log('이미지 정보 전송');
-                   console.log(imageSrc);
                 }, 10000);
             }
             else if (response.state=="DEFENSE"){
@@ -52,6 +51,18 @@ function connect(roomId) {
             } else{
                 video = document.querySelector(`#video-${response.memberId}`);
                 video.className = 'defense';
+                // 이미지 띄우기
+                const image = document.createElement("img");
+                const timestamp = new Date().getTime();
+                image.src = response.image + "?time=" + timestamp;
+                if (response.memberId == response.creatorId){
+                    // 자신이 아닌 유저 화면 멈추기
+                    displayImage(image, `video-${response.participantId}`);
+                } else{
+                    // 자신이 아닌 유저 화면 멈추기
+                    displayImage(image, `video-${response.creatorId}`);
+
+                }
                 setTimeout(function () {
                     if (video.className=='defense'){
                        video.className = '';
@@ -125,33 +136,6 @@ function resetAnimation(){
     right.style.animation = null;
 }
 
-function captureAndDisplayFrame(videoId) {
-    var video = document.getElementById(videoId);
-    console.log(video);
-
-    // 캡처된 프레임을 그릴 캔버스 생성
-    var canvas = document.createElement('canvas');
-    canvas.width = video.videoWidth;
-    canvas.height = video.videoHeight;
-
-    // 캔버스에 비디오 현재 프레임을 그리기
-    var ctx = canvas.getContext('2d');
-    ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-
-    // 캔버스의 이미지 데이터를 가져와서 이미지로 변환
-    var capturedImage = new Image();
-    capturedImage.src = canvas.toDataURL('image/png');
-    console.log(capturedImage);
-    // binary 변환
-    var imageData = canvas.toDataURL('image/png').replace(/^data:image\/(png|jpg);base64,/, '');
-    var binaryData = atob(imageData);
-    console.log("binary data")
-    console.log(binaryData)
-    // 이미지를 표시하는 함수 호출
-    displayImage(capturedImage, videoId);
-    return capturedImage.src;
-}
-
 function displayImage(image, videoId) {
     var video = document.getElementById(videoId);
     var videoRect = video.getBoundingClientRect();
@@ -208,6 +192,9 @@ function sendImage(videoId, roomId){
    })
    .then(response => response.json())
    .then(data => {
+       if (data.code==201){
+          stompClient.send(`/app/offense/${roomId}`);
+       }
        console.log(data);
    })
    .catch((error) => {
