@@ -89,7 +89,7 @@ public class GameController {
     // 방장 게임 시작
     @MessageMapping("/start/{id}")
     @SendTo("/topic/game/{id}")
-    public GameInfo start(
+    public RoomInfo start(
             @DestinationVariable("id") String id,
             Authentication authentication
     ) {
@@ -123,11 +123,16 @@ public class GameController {
                     .message(member.getNickname() + "님이 공격할 차례입니다.").build();
             template.convertAndSend("/topic/message/" + id, socketMessage);
             // 게임 정보 모두에게 전송
-            GameInfo gameInfo = GameInfo.builder()
+            RoomInfo roomInfo = RoomInfo.builder()
                     .memberId(game.getCreatorId())
                     .turnStatus(game.getCurrentState())
-                    .currentRound(game.getCurrentRound()).build();
-            return gameInfo; //
+                    .currentRound(game.getCurrentRound())
+                    .creatorId(game.getCreatorId())
+                    .participantId(game.getParticipantId())
+                    .creatorScore(game.getCreatorScore())
+                    .participantScore(game.getParticipantScore())
+                    .build();
+            return roomInfo; //
         }
     }
     @MessageMapping("/offense/{id}")
@@ -178,6 +183,8 @@ public class GameController {
                 .memberId(nextMemberId)
                 .creatorId(game.getCreatorId())
                 .participantId(game.getParticipantId())
+                .creatorScore(game.getCreatorScore())
+                .participantScore(game.getParticipantScore())
                 .turnStatus(game.getCurrentState())
                 .currentRound(game.getCurrentRound())
                 .image(hostAddress + "storage/images/" + id + ".png")
@@ -211,6 +218,12 @@ public class GameController {
             template.convertAndSend("/topic/message/" + id, socketMessage);
             return null;
         }
+        // 누가 몇 점을 얻었는지 메시지 출력
+        String message = score.toString()+"점을 획득하셨습니다\n";
+        SocketMessage scoreMessage = SocketMessage.builder()
+                .memberId(member.getMemberId())
+                .message(score.toString()+"점을 획득하셨습니다.").build();
+//        template.convertAndSend("/topic/message/" + id, scoreMessage);
         // 바뀐 게임 정보 가져오기
         Game game = gameService.findById(id).get();
         LinkedList<String> queue = game.getQueue();
@@ -224,7 +237,7 @@ public class GameController {
         // 모두가 현재 누구 차례인지 알 수 있도록 메시지 전송
         SocketMessage socketMessage = SocketMessage.builder()
                 .memberId(nextMemberId)
-                .message(nextMemberId + "님이 공격할 차례입니다.").build();
+                .message(message+nextMemberId + "님이 공격할 차례입니다.").build();
         template.convertAndSend("/topic/message/" + id, socketMessage);
         // 모두에게 바뀐 게임 정보 보내기
         RoomInfo roomInfo = RoomInfo.builder()
