@@ -59,13 +59,8 @@ public class ViewController {
 
     @GetMapping("/rooms/{id}")
     public String games(@PathVariable("id") String id, Model model) {
-        Optional<Room> room = roomService.findById(id);
-        Optional<Game> game = gameService.findById(id);
-        // 해당 방이 없거나 꽉 찼다면 방 목록으로 리다이렉트
-        if (room.isEmpty() || game.isEmpty() || game.get().getCurrentNum()>=2) {
-            return "redirect:/rooms";
-        }
-        model.addAttribute("room", room.get());
+        Room room = roomService.findById(id);
+        model.addAttribute("room", room);
         return "game";
     }
 }

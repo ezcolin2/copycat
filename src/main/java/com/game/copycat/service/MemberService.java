@@ -4,6 +4,7 @@ import com.game.copycat.dto.JoinRequest;
 import com.game.copycat.dto.LoginRequest;
 import com.game.copycat.domain.Member;
 import com.game.copycat.dto.MemberInfo;
+import com.game.copycat.exception.MemberNotFoundException;
 import com.game.copycat.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -31,6 +32,24 @@ public class MemberService {
                 .nickname(joinRequest.getNickname()).build();
         memberRepository.save(member);
         return true;
+    }
+
+    public void changeMemberRecord(String winnerId, String loserId) {
+        // 이긴 사람은 1승 추가 진 사람은 1패 추가
+        Optional<Member> findWinner = memberRepository.findByMemberId(winnerId);
+        if (findWinner.isEmpty()) {
+            throw new MemberNotFoundException(winnerId);
+        }
+        Optional<Member> findLoser = memberRepository.findByMemberId(loserId);
+        if (findLoser.isEmpty()) {
+            throw new MemberNotFoundException(loserId);
+        }
+        Member winner = findWinner.get();
+        Member loser = findLoser.get();
+        winner.win();
+        loser.lose();
+        memberRepository.save(winner);
+        memberRepository.save(loser);
     }
 
 }

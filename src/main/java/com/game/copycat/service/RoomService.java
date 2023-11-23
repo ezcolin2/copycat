@@ -2,6 +2,7 @@ package com.game.copycat.service;
 
 import com.game.copycat.domain.Room;
 import com.game.copycat.dto.RoomRequest;
+import com.game.copycat.exception.RoomAndGameNotFoundException;
 import com.game.copycat.repository.RoomRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -36,8 +37,12 @@ public class RoomService {
         return roomRepository.save(room);
     }
 
-    public Optional<Room> findById(String id) {
-        return roomRepository.findById(id);
+    public Room findById(String id) {
+        Optional<Room> findRoom = roomRepository.findById(id);
+        if (findRoom.isEmpty()) {
+            throw new RoomAndGameNotFoundException("roomId", id);
+        }
+        return findRoom.get();
     }
 
     public boolean passwordCheck(String id, String password) {

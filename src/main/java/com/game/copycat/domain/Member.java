@@ -24,6 +24,15 @@ public class Member implements Serializable {
     private Integer total;
     private Integer win;
     private Integer lose;
+
+    public void win() {
+        this.win+=1;
+        this.total+=1;
+    }
+    public void lose() {
+        this.win-=1;
+        this.total-=1;
+    }
     @Builder
     public Member(
             String memberId,

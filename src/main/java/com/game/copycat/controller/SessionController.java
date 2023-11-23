@@ -77,10 +77,9 @@ public class SessionController {
         // Session already exists
         try {
 //            Game game = gameService.enterGame(roomId);
-            Optional<Room> room = roomService.findById(roomId);
-            Room room1 = room.get();
+            Room room = roomService.findById(roomId);
             // 방이 꽉 찼다면 못 들어감
-            if (room1.getCurrentNum() >= 2) {
+            if (room.getCurrentNum() >= 2) {
                 return "redirect:/rooms";
 
             }
@@ -92,7 +91,7 @@ public class SessionController {
             this.mapSessionNamesTokens.get(roomId).put(token, role);
 
             // Add all the needed attributes to the template
-            model.addAttribute("room", room.get());
+            model.addAttribute("room", room);
             model.addAttribute("roomId", roomId);
             model.addAttribute("token", token);
             model.addAttribute("nickName", member.getNickname());

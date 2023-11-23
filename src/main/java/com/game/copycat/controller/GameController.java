@@ -3,6 +3,7 @@ package com.game.copycat.controller;
 import com.game.copycat.domain.*;
 import com.game.copycat.dto.*;
 import com.game.copycat.service.GameService;
+import com.game.copycat.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
@@ -14,6 +15,7 @@ import org.springframework.stereotype.Controller;
 
 import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.Objects;
 import java.util.Optional;
 
 @Controller
@@ -21,6 +23,7 @@ import java.util.Optional;
 public class GameController {
     private final GameService gameService;
     private final SimpMessagingTemplate template;
+    private final MemberService memberService;
 
     @Value("${server.host.address}")
     private String hostAddress;
@@ -110,7 +113,7 @@ public class GameController {
         // 성공한다면
         else {
             // 게임 정보 가져오기
-            Game game = gameService.findById(id).get();
+            Game game = gameService.findById(id);
             // 우선 현재 턴을 진행할 유저에게 너의 차례라고 알려주고 공격, 수비 정보를 줌
             // 유저는 정보를 받아서 3초 뒤 자신의 역할에 맞는 정보를 다시 예정
             HashMap<String, String> map = new HashMap<>();
@@ -163,7 +166,7 @@ public class GameController {
             return null;
         }
         // 바뀐 게임 정보 가져오기
-        Game game = gameService.findById(id).get();
+        Game game = gameService.findById(id);
         LinkedList<String> queue = game.getQueue();
         String nextMemberId = queue.getFirst();
 
@@ -218,15 +221,32 @@ public class GameController {
             template.convertAndSend("/topic/message/" + id, socketMessage);
             return null;
         }
+        // 요청을 보낸 유저가 마지막 유저였다면 게임 종료
+//        if (gameService.isEnd(id)) {
+//            // 전적 변경
+//            gameService.endGame(id);
+//            return null;
+//        }
         // 누가 몇 점을 얻었는지 메시지 출력
         String message = score.toString()+"점을 획득하셨습니다\n";
-        SocketMessage scoreMessage = SocketMessage.builder()
-                .memberId(member.getMemberId())
-                .message(score.toString()+"점을 획득하셨습니다.").build();
-//        template.convertAndSend("/topic/message/" + id, scoreMessage);
         // 바뀐 게임 정보 가져오기
-        Game game = gameService.findById(id).get();
+        Game game = gameService.findById(id);
         LinkedList<String> queue = game.getQueue();
+        // 요청을 보낸 유저가 마지막 유저였다면 게임 종료
+        if (queue.isEmpty()) {
+            // 전적 변경
+            gameService.endGame(id);
+//            RoomInfo roomInfo = RoomInfo.builder()
+//                    .memberId(game.getCreatorId())
+//                    .turnStatus(game.getCurrentState())
+//                    .currentRound(game.getCurrentRound())
+//                    .creatorId(game.getCreatorId())
+//                    .participantId(game.getParticipantId())
+//                    .creatorScore(game.getCreatorScore())
+//                    .participantScore(game.getParticipantScore())
+//                    .build();
+            return null;
+        }
         String nextMemberId = queue.getFirst();
         // 우선 현재 턴을 진행할 유저에게 너의 차례라고 알려주고 공격, 수비 정보를 줌
         // 유저는 정보를 받아서 3초 뒤 자신의 역할에 맞는 정보를 다시 보낼 예정

@@ -5,13 +5,16 @@ import com.game.copycat.domain.Member;
 import com.game.copycat.domain.Room;
 import com.game.copycat.domain.TurnState;
 import com.game.copycat.dto.GameInfo;
+import com.game.copycat.dto.SocketMessage;
+import com.game.copycat.exception.MemberNotFoundException;
+import com.game.copycat.exception.RoomAndGameNotFoundException;
 import com.game.copycat.repository.GameRepository;
+import com.game.copycat.repository.MemberRepository;
 import com.game.copycat.repository.RoomRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.core.Authentication;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
-import org.springframework.validation.BindingResult;
 
 import java.io.File;
 import java.util.LinkedList;
@@ -22,6 +25,8 @@ import java.util.Optional;
 public class GameService {
     private final GameRepository gameRepository;
     private final RoomRepository roomRepository;
+    private final MemberRepository memberRepository;
+    private final SimpMessagingTemplate template;
     @Value("${image.path}")
     private String path; // 이미 저장 경로
     private void deleteImage(String roomId) {
@@ -51,8 +56,12 @@ public class GameService {
 //        queue
 //    }
 
-    public Optional<Game> findById(String id) {
-        return gameRepository.findById(id);
+    public Game findById(String id) {
+        Optional<Game> findGame = gameRepository.findById(id);
+        if (findGame.isEmpty()){
+            throw new RoomAndGameNotFoundException("gameId", id);
+        }
+        return findGame.get();
     }
 
     public Optional<Game> enterGame(String gameId, String memberId) {
@@ -124,8 +133,11 @@ public class GameService {
         // round 수만큼 큐에 순서 추가
         Optional<Room> findRoom = roomRepository.findById(gameId);
         Room room = findRoom.get();
-        String pop = queue.pop();
-        System.out.println("pop = " + pop);
+        if (queue.size()==1) {
+            String pop = queue.pop();
+            System.out.println("pop = " + pop);
+        }
+        System.out.println("i = " + room.getRound());
         for (int i = 0; i < room.getRound(); i++) {
             queue.add(creatorId);
             queue.add(participantId);
@@ -180,6 +192,60 @@ public class GameService {
                 .currentRound(currentRound)
                 .memberId(memberId).build();
         return gameInfo;
+    }
+
+    public boolean isEnd(String gameId) {
+        // 큐가 비어있다면 게임이 끝난 것
+        Optional<Game> findGame = gameRepository.findById(gameId);
+        if (findGame.isEmpty()) {
+            throw new RoomAndGameNotFoundException("gameId", gameId);
+        }
+        Game game = findGame.get();
+        LinkedList<String> queue = game.getQueue();
+        // 비어있다면 점수 비교해서 전적 변경
+        return queue.isEmpty();
+    }
+
+    public void endGame(String gameId) {
+        Optional<Game> findGame = gameRepository.findById(gameId);
+        if (findGame.isEmpty()) {
+            throw new RoomAndGameNotFoundException("gameId", gameId);
+        }
+        Game game = findGame.get();
+        String winnerId = "";
+        String loserId = "";
+        if (game.getCreatorScore() > game.getParticipantScore()) {
+            winnerId = game.getCreatorId();
+            loserId = game.getParticipantId();
+        }
+        else{
+            winnerId = game.getParticipantId();
+            loserId = game.getCreatorId();
+        }
+
+        // 이긴 사람은 1승 추가 진 사람은 1패 추가
+        Optional<Member> findWinner = memberRepository.findByMemberId(winnerId);
+        if (findWinner.isEmpty()) {
+            throw new MemberNotFoundException(winnerId);
+        }
+        Optional<Member> findLoser = memberRepository.findByMemberId(loserId);
+        if (findLoser.isEmpty()) {
+            throw new MemberNotFoundException(loserId);
+        }
+        Member winner = findWinner.get();
+        Member loser = findLoser.get();
+        winner.win();
+        loser.lose();
+        memberRepository.save(winner);
+        memberRepository.save(loser);
+        SocketMessage winnerMessage = SocketMessage.builder()
+                .memberId(winnerId)
+                .message("게임에서 승리하셨습니다").build();
+        SocketMessage loserMessage = SocketMessage.builder()
+                .memberId(loserId)
+                .message("게임에서 패배하셨습니다").build();
+        template.convertAndSend("/topic/message/" + gameId, winnerMessage);
+        template.convertAndSend("/topic/message/" + gameId, loserMessage);
     }
 }
 
