@@ -75,7 +75,7 @@ function connect(roomId) {
                 }, 10000);
                 console.log(video)
                 showTimer();
-            } else{
+            } else if (response.turnState=="DEFENSE"){
                 video = document.querySelector(`#video-${response.memberId}`);
                 video.className = 'defense';
                 // 이미지 띄우기
@@ -101,8 +101,25 @@ function connect(roomId) {
 
                 console.log(video)
                 showTimer();
-            }
+            } else {
+                console.log('게임 종료')
+                changeGameData(response.creatorId, response.creatorScore);
+                changeGameData(response.participantId, response.participantScore);
+                // 이미지 제거
+                var pose1ImageElement = document.getElementById('server-image');
+                if (pose1ImageElement){
+                    pose1ImageElement.parentNode.remove();
+                }
+             }
         });
+//        stompClient.subscribe(`/topic/end/${roomId}`, function (gameInfo) {
+//            changeGameData(response.creatorId, 0);
+//            changeGameData(response.participantId, 0);
+//            // 이미지 제거
+//            var pose1ImageElement = document.getElementById('server-image');
+//            if (pose1ImageElement){
+//                pose1ImageElement.parentNode.remove();
+//        }});
         stompClient.send(`/app/connect/${roomId}`);
     });
     const btn = document.querySelector("#start")

@@ -236,16 +236,16 @@ public class GameController {
         if (queue.isEmpty()) {
             // 전적 변경
             gameService.endGame(id);
-//            RoomInfo roomInfo = RoomInfo.builder()
-//                    .memberId(game.getCreatorId())
-//                    .turnStatus(game.getCurrentState())
-//                    .currentRound(game.getCurrentRound())
-//                    .creatorId(game.getCreatorId())
-//                    .participantId(game.getParticipantId())
-//                    .creatorScore(game.getCreatorScore())
-//                    .participantScore(game.getParticipantScore())
-//                    .build();
-            return null;
+            RoomInfo roomInfo = RoomInfo.builder()
+                    .memberId(game.getCreatorId())
+                    .turnStatus(TurnState.END)
+                    .currentRound(game.getCurrentRound())
+                    .creatorId(game.getCreatorId())
+                    .participantId(game.getParticipantId())
+                    .creatorScore(game.getCreatorScore())
+                    .participantScore(game.getParticipantScore())
+                    .build();
+            return roomInfo;
         }
         String nextMemberId = queue.getFirst();
         // 우선 현재 턴을 진행할 유저에게 너의 차례라고 알려주고 공격, 수비 정보를 줌

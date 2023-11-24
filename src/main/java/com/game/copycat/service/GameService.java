@@ -246,6 +246,7 @@ public class GameService {
                 .message("게임에서 패배하셨습니다").build();
         template.convertAndSend("/topic/message/" + gameId, winnerMessage);
         template.convertAndSend("/topic/message/" + gameId, loserMessage);
+//        template.convertAndSend("/topic/end/" + gameId, "");
     }
 }
 

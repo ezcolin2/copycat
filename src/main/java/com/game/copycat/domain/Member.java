@@ -30,8 +30,8 @@ public class Member implements Serializable {
         this.total+=1;
     }
     public void lose() {
-        this.win-=1;
-        this.total-=1;
+        this.lose+=1;
+        this.total+=1;
     }
     @Builder
     public Member(
