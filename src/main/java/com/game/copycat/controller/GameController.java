@@ -45,8 +45,16 @@ public class GameController {
         // 접속할 수 없을 때
         if (findGame.isEmpty()) {
             return ConnectionMessage.builder()
-                    .message("접속할 수 없습니다.")
+                    .message("방을 찾을 수 없습니다.")
                     .isSuccess(false).build();
+        }
+        Game game = findGame.get();
+        // 꽉 찼다면
+        if (game.getCurrentNum() >= 2) {
+            return ConnectionMessage.builder()
+                    .message("방이 가득 찼습니다.")
+                    .isSuccess(false).build();
+
         }
         MemberInfo info = MemberInfo.builder()
                 .id(member.getId())
@@ -102,16 +110,8 @@ public class GameController {
 
         // 방 정보
         boolean isSuccess = gameService.startGame(id, member.getMemberId());
-        // 실패한다면 (방장이 아닌 사람이 시작, 사람이 없는데 시작)
-        if (!isSuccess) {
-            SocketMessage socketMessage = SocketMessage.builder()
-                    .memberId(member.getMemberId())
-                    .message("게임을 시작할 수 없습니다.").build();
-            template.convertAndSend("/topic/message/" + id, socketMessage);
-            return null;
-        }
         // 성공한다면
-        else {
+        if (isSuccess) {
             // 게임 정보 가져오기
             Game game = gameService.findById(id);
             // 우선 현재 턴을 진행할 유저에게 너의 차례라고 알려주고 공격, 수비 정보를 줌
@@ -137,6 +137,7 @@ public class GameController {
                     .build();
             return roomInfo; //
         }
+        return null;
     }
     @MessageMapping("/offense/{id}")
     @SendTo("/topic/game/{id}")

@@ -8,6 +8,9 @@ function connect(roomId) {
         console.log('연결 완료');
         stompClient.subscribe(`/topic/connection/${roomId}`, function (connectionMessage) {
             response = JSON.parse(connectionMessage.body);
+            if (response.connection=="DISCONNECT"){
+
+            }
             member = response.result;
             console.log(member.memberId);
             showMessage(response.message, member.memberId);

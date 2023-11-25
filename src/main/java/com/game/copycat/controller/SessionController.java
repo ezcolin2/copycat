@@ -83,6 +83,8 @@ public class SessionController {
                 return "redirect:/rooms";
 
             }
+            // current num 증가
+            roomService.enterRoom(roomId);
 //            model.addAttribute("game", game);
             // Generate a new token with the recently created connectionProperties
             String token = this.mapSessions.get(roomId).createConnection(connectionProperties).getToken();

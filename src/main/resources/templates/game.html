@@ -50,12 +50,12 @@
     <div id="logged">
         <div id="session">
             <div id="session-header">
-                <h1 th:text="${sessionName}" id="session-title"></h1>
+                <h1 th:text="${roomName}" id="session-title">hello</h1>
                 <form action="/leave-session" method="post" onsubmit="leaveSession()">
                     <input type="hidden" name="roomId" th:value="${roomId}"></input>
                     <input type="hidden" name="token" th:value="${token}"></input>
                     <button id="buttonLeaveSession" class="btn btn-large btn-danger" type="submit">
-                        Leave session</button>
+                        방 나가기</button>
                 </form>
             </div>
             <button id="draw">스켈레톤 그리기</button>

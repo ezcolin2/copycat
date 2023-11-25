@@ -24,6 +24,12 @@ public class SecurityConfig {
         httpSecurity.csrf(
                 csrf -> csrf.disable()
         );
+        httpSecurity.sessionManagement(
+                sessionManagement -> {
+                    sessionManagement.maximumSessions(1).maxSessionsPreventsLogin(true);
+                    sessionManagement.invalidSessionUrl("/login");
+                }
+        );
         httpSecurity.formLogin(
                 formLogin-> {
                     formLogin.usernameParameter("memberId");

@@ -123,8 +123,19 @@ public class GameService {
         Optional<Game> findGame = gameRepository.findById(gameId);
         Game game = findGame.get();
         // 만약 참가자가 시작하거나 사람이 없다면 거절
-        if (memberId.equals(game.getParticipantId()) || game.getCurrentNum()!=2) {
+        if (memberId.equals(game.getParticipantId())) {
+            SocketMessage socketMessage = SocketMessage.builder()
+                    .memberId(memberId)
+                    .message("방장만 게임을 시작할 수 있습니다.").build();
+            template.convertAndSend("/topic/message/" + gameId, socketMessage);
             return false;
+        } else if (game.getCurrentNum()!=2){
+            SocketMessage socketMessage = SocketMessage.builder()
+                    .memberId(memberId)
+                    .message("인원이 충분하지 않습니다.").build();
+            template.convertAndSend("/topic/message/" + gameId, socketMessage);
+            return false;
+
         }
         // 방장만 시작 가능
         LinkedList<String> queue = game.getQueue();

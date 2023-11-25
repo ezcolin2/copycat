@@ -40,7 +40,7 @@ public class Room {
         this.password = password;
         this.isLocked = isLocked;
         this.round = round;
-        this.currentNum = 0;
+        this.currentNum = 1;
     }
     public void enterRoom() {
         this.currentNum+=1;
