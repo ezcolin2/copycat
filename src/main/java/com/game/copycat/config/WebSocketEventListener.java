@@ -1,8 +1,10 @@
 package com.game.copycat.config;
 
 import com.game.copycat.domain.PrincipalDetails;
+import com.game.copycat.service.GameService;
 import com.game.copycat.service.RoomService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.EventListener;
 import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
@@ -19,16 +21,15 @@ import java.util.Set;
 
 @Component
 @RequiredArgsConstructor
+@Slf4j
 public class WebSocketEventListener {
-    private final RoomService roomService;
+    private final GameService gameService;
 
 
     @EventListener
     public void handleWebSocketDisconnectListener(SessionDisconnectEvent event) {
-        String sessionId = event.getSessionId();
         Principal user = event.getUser();
-        System.out.println("event user = " + user.getName());
-
-        System.out.println("sessionId = " + sessionId);
+        log.info("종료 : {}", user.getName());
+        gameService.leaveGameOnlyMemberId(user.getName());
     }
 }

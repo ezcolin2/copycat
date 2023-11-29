@@ -3,6 +3,7 @@ package com.game.copycat.domain;
 import lombok.*;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.redis.core.RedisHash;
+import org.springframework.data.redis.core.index.Indexed;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -18,8 +19,10 @@ public class Game{
     private TurnState currentState; // 현재 턴의 공격, 수비 상태
     private LinkedList<String> queue; // memberId 저장
     @Setter
+    @Indexed
     private String creatorId; // 방장 아이디
     @Setter
+    @Indexed
     private String participantId; // 방장이 아닌 아이디
     private Integer creatorScore;
     private Integer participantScore;

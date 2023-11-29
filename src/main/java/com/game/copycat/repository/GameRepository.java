@@ -9,5 +9,5 @@ import java.util.Optional;
 
 public interface GameRepository extends CrudRepository<Game, String> {
     Optional<Game> findByCreatorId(String creatorId);
-    Optional<Game> findByParticipantId(String creatorId);
+    Optional<Game> findByParticipantId(String participantId);
 }

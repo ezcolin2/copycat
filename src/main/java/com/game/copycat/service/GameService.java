@@ -124,6 +124,52 @@ public class GameService {
         }
         // 참가자 수 줄이고 참가자 아이디 공백으로
     }
+    public void leaveGameOnlyMemberId(String memberId) {
+        // gameId를 모르는 상태에서 나갈 때
+        // 방 나가기 버튼을 누른게 아닌 브라우저에서 종료할 때 사용
+        String gameId = "";
+        gameRepository.findByParticipantId(memberId);
+        Optional<Game> findCreator = gameRepository.findByCreatorId(memberId);
+        // 찾지 못했다면 participant로 찾음
+        if (findCreator.isEmpty()) {
+            Optional<Game> findParticipant = gameRepository.findByParticipantId(memberId);
+            Game game = findParticipant.get();
+            gameId = game.getId();
+        } else{
+            gameId = findCreator.get().getId();
+        }
+        Optional<Game> findGame = gameRepository.findById(gameId);
+        Optional<Room> findRoom = roomRepository.findById(gameId);
+        Game game = findGame.get();
+        Room room = findRoom.get();
+        String creatorId = game.getCreatorId();
+        String participantId = game.getParticipantId();
+        // 한 명 남은 사람이 떠난다면 삭제
+        if (game.getCurrentNum() == 1) {
+            gameRepository.delete(game);
+            roomRepository.delete(roomRepository.findById(gameId).get());
+            deleteImage(gameId);
+
+        }
+        // 아직 사람이 남아있고 방 생성자가 떠난다면 참가자를 방 생성자로 변경
+        else if (memberId.equals(creatorId)) {
+            game.setCreatorId(game.getParticipantId());
+            game.setParticipantId("");
+            game.leaveGame();
+            room.leaveRoom();
+            gameRepository.save(game);
+            roomRepository.save(room);
+        }
+        // 아직 사람이 남아있고 방 생성자가 떠난다면 참가자를 비움
+        else if (memberId.equals(participantId)) {
+            game.setParticipantId("");
+            game.leaveGame();
+            room.leaveRoom();
+            gameRepository.save(game);
+            roomRepository.save(room);
+        }
+        // 참가자 수 줄이고 참가자 아이디 공백으로
+    }
 
     public boolean startGame(String gameId, String memberId) {
         Optional<Game> findGame = gameRepository.findById(gameId);
