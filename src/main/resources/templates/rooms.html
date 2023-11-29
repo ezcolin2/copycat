@@ -11,15 +11,15 @@
 <div id="display">
     <div id="left"v>
         <button type="button" class="btn btn-primary w-100" data-toggle="modal" data-target="#createRoomModal">방 생성</button>
-        <form action="/api/logout" method="post">
-            <button type="submit" class="btn btn-primary w-100">로그아웃</button>
-        </form>
         <div class="card">
             <img th:src="@{/images/user.png}" style="width:100%">
             <h3 th:text="${info.nickname}">John Doe</h3>
             <p class="title" th:text="|${info.total}전 ${info.win}승 ${info.lose}패|">CEO & Founder, Example</p>
 
         </div>
+        <form action="/api/logout" method="post">
+            <button type="submit" class="btn btn-danger w-100">로그아웃</button>
+        </form>
     </div>
     <div id="container">
 

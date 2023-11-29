@@ -93,7 +93,9 @@ public class GameService {
 
     public void leaveGame(String gameId, String memberId) {
         Optional<Game> findGame = gameRepository.findById(gameId);
+        Optional<Room> findRoom = roomRepository.findById(gameId);
         Game game = findGame.get();
+        Room room = findRoom.get();
         String creatorId = game.getCreatorId();
         String participantId = game.getParticipantId();
         // 한 명 남은 사람이 떠난다면 삭제
@@ -108,13 +110,17 @@ public class GameService {
             game.setCreatorId(game.getParticipantId());
             game.setParticipantId("");
             game.leaveGame();
+            room.leaveRoom();
             gameRepository.save(game);
+            roomRepository.save(room);
         }
         // 아직 사람이 남아있고 방 생성자가 떠난다면 참가자를 비움
         else if (memberId.equals(participantId)) {
             game.setParticipantId("");
             game.leaveGame();
+            room.leaveRoom();
             gameRepository.save(game);
+            roomRepository.save(room);
         }
         // 참가자 수 줄이고 참가자 아이디 공백으로
     }

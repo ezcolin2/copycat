@@ -165,10 +165,13 @@ public class SessionController {
         }
     @PostMapping("/leave-session")
     public String removeUser(@RequestParam(name = "roomId") String roomId,
-                             @RequestParam(name = "token") String token, Model model, HttpSession httpSession) throws Exception {
+                             @RequestParam(name = "token") String token, Model model, HttpSession httpSession,
+                             Authentication authentication
+    ) throws Exception {
 
         System.out.println("Removing user | sessioName=" + roomId + ", token=" + token);
-
+        PrincipalDetails principalDetails = (PrincipalDetails) authentication.getPrincipal();
+        String username = principalDetails.getUsername();
         // If the session exists ("TUTORIAL" in this case)
         if (this.mapSessions.get(roomId) != null && this.mapSessionNamesTokens.get(roomId) != null) {
 
